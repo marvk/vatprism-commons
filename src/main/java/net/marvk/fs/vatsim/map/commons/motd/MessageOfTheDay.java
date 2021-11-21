@@ -31,6 +31,8 @@ public class MessageOfTheDay {
     boolean dismissable = true;
     @Builder.Default
     boolean recurring = true;
+    @Builder.Default
+    boolean production = true;
     @NonNull
     Level level;
     @Builder.Default
