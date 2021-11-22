@@ -1,8 +1,6 @@
 
 package net.marvk.fs.vatsim.map.commons.motd;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
@@ -13,11 +11,12 @@ import lombok.Value;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 @JsonDeserialize(builder = MessageOfTheDay.MessageOfTheDayBuilderInternal.class)
 @JsonView()
 @Value
-@Builder(builderClassName = "MessageOfTheDayBuilder")
+@Builder(builderClassName = "MessageOfTheDayBuilder", toBuilder = true)
 public class MessageOfTheDay {
     @NonNull
     String title;
@@ -37,12 +36,46 @@ public class MessageOfTheDay {
     Level level;
     @Builder.Default
     List<Button> buttons = List.of();
-    Double minHours;
-    Double maxHours;
     Range<LocalDate> dateRange;
     LocalDate date;
     Range<Version> versionRange;
     Version version;
+    @JsonDeserialize(using = HoursRangeDeserializer.class)
+    Range<Double> hoursRange;
+
+    public boolean matchesHours(final Double hours) {
+        Objects.requireNonNull(hours);
+
+        return hoursRange.contains(hours);
+    }
+
+    public boolean matchesVersion(final Version version) {
+        Objects.requireNonNull(version);
+
+        if (this.version != null) {
+            return this.version.equals(version);
+        }
+
+        if (this.versionRange != null) {
+            return this.versionRange.contains(version);
+        }
+
+        return true;
+    }
+
+    public boolean matchesDate(final LocalDate localDate) {
+        Objects.requireNonNull(localDate);
+
+        if (this.date != null) {
+            return this.date.equals(localDate);
+        }
+
+        if (this.dateRange != null) {
+            return this.dateRange.contains(localDate);
+        }
+
+        return true;
+    }
 
     public static MessageOfTheDayBuilder builder() {
         return new MessageOfTheDayBuilderInternal();
@@ -77,5 +110,12 @@ public class MessageOfTheDay {
             }
             return motd;
         }
+    }
+
+    public MessageOfTheDay withDereferencedContent(final String content) {
+        if (this.content != null || this.file == null) {
+            throw new IllegalArgumentException("MOTD is already dereferenced");
+        }
+        return toBuilder().file(null).content(content).build();
     }
 }

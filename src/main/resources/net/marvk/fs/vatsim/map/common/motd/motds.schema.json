@@ -72,6 +72,23 @@
                             "type": "string",
                             "description": "The URL of the button",
                             "pattern": "((([A-Za-z]{3,9}:(?://)?)(?:[-;:&=+$,\\w]+@)?[A-Za-z0-9.-]+(:[0-9]+)?|(?:www.|[-;:&=+$,\\w]+@)[A-Za-z0-9.-]+)((?:/[+~%/.\\w-_]*)?\\??[-+=&;%@.\\w_]*#?[\\w]*)?)"
+                        },
+                        "color": {
+                            "type": "string",
+                            "description": "The background color of the button",
+                            "pattern": "#[0-9A-Fa-f]{6}"
+                        },
+                        "image": {
+                            "type": "string",
+                            "description": "The image of the button",
+                            "oneOf": [
+                                {
+                                    "pattern": "((([A-Za-z]{3,9}:(?://)?)(?:[-;:&=+$,\\w]+@)?[A-Za-z0-9.-]+(:[0-9]+)?|(?:www.|[-;:&=+$,\\w]+@)[A-Za-z0-9.-]+)((?:/[+~%/.\\w-_]*)?\\??[-+=&;%@.\\w_]*#?[\\w]*)?)"
+                                },
+                                {
+                                    "pattern": "^data:image/[\\w\\-.]+;base64,[A-Za-z0-9/+]+$"
+                                }
+                            ]
                         }
                     },
                     "required": [
@@ -80,16 +97,6 @@
                     ]
                 },
                 "minLength": 1
-            },
-            "minHours": {
-                "type": "number",
-                "description": "The minimum amount of hours the user has to have logged before showing this message",
-                "minimum": 0
-            },
-            "maxHours": {
-                "type": "number",
-                "description": "The maximum amount of hours the user may have logged to still show this message",
-                "minimum": 0
             },
             "dateRange": {
                 "type": "object",
@@ -156,6 +163,32 @@
                 "type": "string",
                 "description": "The version for which MOTD is shown to users, as a valid semantic version",
                 "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$"
+            },
+            "hoursRange": {
+                "type": "object",
+                "description": "The range of usage hours in which the MOTD is shown to users",
+                "properties": {
+                    "from": {
+                        "type": "number",
+                        "description": "With which hour count the range starts, inclusively"
+                    },
+                    "to": {
+                        "type": "number",
+                        "description": "With which hour count the range ends, inclusively"
+                    }
+                },
+                "anyOf": [
+                    {
+                        "required": [
+                            "from"
+                        ]
+                    },
+                    {
+                        "required": [
+                            "to"
+                        ]
+                    }
+                ]
             }
         },
         "required": [
