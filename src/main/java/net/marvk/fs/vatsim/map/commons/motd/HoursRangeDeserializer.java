@@ -7,8 +7,12 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
 import java.io.IOException;
+import java.io.Serial;
 
 public class HoursRangeDeserializer extends StdDeserializer<Range<Double>> {
+    @Serial
+    private static final long serialVersionUID = -645078820266909642L;
+
     protected HoursRangeDeserializer() {
         super(Range.class);
     }
