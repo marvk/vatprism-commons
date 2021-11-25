@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.fasterxml.jackson.databind.node.NullNode;
 
 import java.io.IOException;
 import java.io.Serial;
@@ -27,11 +28,11 @@ public class HoursRangeDeserializer extends StdDeserializer<Range<Double>> {
         return new Range<>(parseDouble(fromNode), parseDouble(toNode));
     }
 
-    private static Double parseDouble(final TreeNode fromNode) {
-        if (fromNode != null) {
-            return Double.parseDouble(fromNode.toString());
-        } else {
+    private static Double parseDouble(final TreeNode node) {
+        if (node == null || node instanceof NullNode) {
             return null;
+        } else {
+            return Double.parseDouble(node.toString());
         }
     }
 }
